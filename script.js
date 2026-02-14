@@ -1,5 +1,8 @@
 // script.js
 
+var noImages = ['dez_eyebrows.JPEG', 'dog_seatbelt.JPEG', 'ay cabron.JPEG', 'dog-why-you-lying.gif', 'dez_looking_up_sad.JPEG']; // Add your image filenames here
+var yesImages = ['cat.gif', 'dez_gif.gif', '', 'dez_smiling_teef.JPEG', 'quiero_perrear.gif', 'shake_you_hips.gif']; // Add your happy image filenames here
+
 // Function to handle button click events
 function selectOption(option) {
     // Check which option was clicked
@@ -7,15 +10,19 @@ function selectOption(option) {
         // Flash rainbow colors
         flashRainbowColors(function() {
             document.getElementById('question').style.display = 'none'; // Hide the question
-            displayCatHeart(); // Display the cat-heart.gif
+            displayHappyImages(); // Display random happy images across the page
         });
     } else if (option === 'no') {
+        // Display a random image from the noImages array
+        var randomImage = noImages[Math.floor(Math.random() * noImages.length)];
+        displayImage(randomImage);
+        
         // Change text on the "No" button to "You sure?"
         document.getElementById('no-button').innerText = 'You sure?'; 
         // Increase font size of "Yes" button
         var yesButton = document.getElementById('yes-button');
         var currentFontSize = window.getComputedStyle(yesButton).getPropertyValue('font-size');
-        var newSize = parseFloat(currentFontSize) * 2; // Increase font size by  * 2px
+        var newSize = parseFloat(currentFontSize) * 1.5; // Increase font size by 1.5x
         yesButton.style.fontSize = newSize + 'px';
     } else {
         // If neither "Yes" nor "No" was clicked, show an alert message
@@ -56,24 +63,52 @@ function displayCat() {
     };
 }
 
-// Function to display the cat-heart.gif
-function displayCatHeart() {
+// Helper function to display any image
+function displayImage(imageSrc) {
+    document.getElementById('image-container').innerHTML = '';
+    var imageContainer = document.getElementById('image-container');
+    var newImage = new Image();
+    newImage.src = imageSrc;
+    newImage.alt = 'Image';
+    newImage.onload = function() {
+        imageContainer.appendChild(newImage);
+    };
+}
+
+// Function to display random happy images across the page
+function displayHappyImages() {
     // Clear existing content in the image container
     document.getElementById('image-container').innerHTML = '';
-    // Get the container where the image will be displayed
-    var imageContainer = document.getElementById('image-container');
-    // Create a new Image element for the cat-heart
-    var catHeartImage = new Image();
-    // Set the source (file path) for the cat-heart image
-    catHeartImage.src = 'cat-heart.gif'; // Assuming the cat-heart image is named "cat-heart.gif"
-    // Set alternative text for the image (for accessibility)
-    catHeartImage.alt = 'Cat Heart';
-    // When the cat-heart image is fully loaded, add it to the image container
-    catHeartImage.onload = function() {
-        imageContainer.appendChild(catHeartImage);
-        // Hide the options container
-        document.getElementById('options').style.display = 'none';
-    };
+    // Hide the options container
+    document.getElementById('options').style.display = 'none';
+    
+    // Create a container for the happy images
+    var happyContainer = document.createElement('div');
+    happyContainer.id = 'happy-container';
+    document.getElementById('container').appendChild(happyContainer);
+    
+    // Display each image from the yesImages array at random positions
+    yesImages.forEach(function(imageSrc, index) {
+        var img = new Image();
+        img.src = imageSrc;
+        img.className = 'happy-image';
+        
+        // Generate random position (keeping images visible)
+        // Random position between 10% and 80% for both x and y to keep images on screen
+        var randomX = Math.random() * 70 + 10; // Between 10% and 80%
+        var randomY = Math.random() * 70 + 10; // Between 10% and 80%
+        
+        img.style.position = 'absolute';
+        img.style.left = randomX + '%';
+        img.style.top = randomY + '%';
+        img.style.maxWidth = '200px'; // Set max width so images aren't too large
+        img.style.maxHeight = '200px'; // Set max height
+        
+        // Add a slight delay to each image appearing for a cascading effect
+        setTimeout(function() {
+            happyContainer.appendChild(img);
+        }, index * 200); // 200ms delay between each image
+    });
 }
 
 // Display the cat.gif initially
