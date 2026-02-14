@@ -12,8 +12,8 @@ function selectOption(option) {
         // Flash rainbow colors
         flashRainbowColors(function() {
             document.getElementById('question').style.display = 'none'; // Hide the question
-            showYesMessage(); // Show the custom message first
             displayHappyImages(); // Display random happy images across the page (around the message)
+            showYesMessage(); // Show the custom message last so it appears on top
         });
     } else if (option === 'no') {
         // Display a random image from the noImages array (different from last one)
@@ -113,25 +113,24 @@ function displayHappyImages() {
     // Create a container for the happy images
     var happyContainer = document.createElement('div');
     happyContainer.id = 'happy-container';
-    document.getElementById('container').appendChild(happyContainer);
+    document.body.appendChild(happyContainer);
     
-    // Display each image from the yesImages array at random positions around the message box
+    // Display each image from the yesImages array at positions that avoid the center
     yesImages.forEach(function(imageSrc, index) {
         var img = new Image();
         img.src = imageSrc;
         img.className = 'happy-image';
         
-        // Divide the screen into zones around the center message box
-        // Left side, right side, top corners, bottom corners
+        // Create zones in corners and edges, avoiding center (30%-70% horizontally, 20%-80% vertically)
         var zones = [
-            {x: [5, 25], y: [10, 40]},    // Top left
-            {x: [5, 25], y: [60, 90]},    // Bottom left
-            {x: [75, 90], y: [10, 40]},   // Top right
-            {x: [75, 90], y: [60, 90]},   // Bottom right
-            {x: [10, 30], y: [45, 55]},   // Middle left
-            {x: [70, 85], y: [45, 55]},   // Middle right
-            {x: [35, 45], y: [5, 15]},    // Top center
-            {x: [55, 65], y: [5, 15]}     // Top center right
+            {x: [2, 20], y: [5, 25]},      // Top left corner
+            {x: [80, 95], y: [5, 25]},     // Top right corner
+            {x: [2, 20], y: [75, 95]},     // Bottom left corner
+            {x: [80, 95], y: [75, 95]},    // Bottom right corner
+            {x: [2, 15], y: [35, 50]},     // Middle left edge
+            {x: [85, 98], y: [35, 50]},    // Middle right edge
+            {x: [35, 45], y: [2, 12]},     // Top center edge
+            {x: [55, 65], y: [88, 98]}     // Bottom center edge
         ];
         
         // Assign each image to a zone
@@ -139,11 +138,12 @@ function displayHappyImages() {
         var randomX = Math.random() * (zone.x[1] - zone.x[0]) + zone.x[0];
         var randomY = Math.random() * (zone.y[1] - zone.y[0]) + zone.y[0];
         
-        img.style.position = 'absolute';
+        img.style.position = 'fixed';
         img.style.left = randomX + '%';
         img.style.top = randomY + '%';
-        img.style.maxWidth = '120px';
-        img.style.maxHeight = '120px';
+        img.style.maxWidth = '150px';
+        img.style.maxHeight = '150px';
+        img.style.transform = 'translate(-50%, -50%)'; // Center the image on its position
         
         // Add a slight delay to each image appearing for a cascading effect
         setTimeout(function() {
@@ -157,10 +157,17 @@ function showYesMessage() {
     var messageBox = document.createElement('div');
     messageBox.id = 'yes-message';
     
-    // Convert newlines to <br> tags for proper display
-    var formattedMessage = yesMessage.replace(/\n/g, '<br>');
-    messageBox.innerHTML = formattedMessage;
+    // Split message into lines and create proper HTML structure
+    var lines = yesMessage.split('\n');
+    var formattedHTML = '';
     
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].trim() !== '') {
+            formattedHTML += '<p>' + lines[i] + '</p>';
+        }
+    }
+    
+    messageBox.innerHTML = formattedHTML;
     document.body.appendChild(messageBox);
     
     // Add animation class after a short delay
