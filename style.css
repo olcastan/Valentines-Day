@@ -72,20 +72,44 @@ button {
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
   font-family: 'Sacramento', cursive;
-  font-size: 64px;
+  font-size: 28px; /* Smaller font size for readability */
+  line-height: 1.6; /* Better line spacing */
   color: #FF1493; /* Deep pink color */
   background: linear-gradient(135deg, #FFB6C1, #FFC0CB, #FFE4E1);
-  padding: 40px 60px;
+  padding: 30px 40px;
   border-radius: 30px;
   box-shadow: 0 10px 40px rgba(255, 20, 147, 0.4);
   z-index: 2000; /* Above everything else */
-  text-align: center;
+  text-align: left; /* Left align for better readability of list items */
   border: 5px solid #FF69B4;
   opacity: 0;
   transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  max-width: 500px; /* Limit width */
+  max-height: 70vh; /* Limit height to 70% of viewport */
+  overflow-y: auto; /* Enable scrolling if content is too long */
+  word-wrap: break-word; /* Wrap long words */
 }
 
 #yes-message.show {
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
+}
+
+/* Custom scrollbar styling for the message box */
+#yes-message::-webkit-scrollbar {
+  width: 8px;
+}
+
+#yes-message::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+#yes-message::-webkit-scrollbar-thumb {
+  background: #FF69B4;
+  border-radius: 10px;
+}
+
+#yes-message::-webkit-scrollbar-thumb:hover {
+  background: #FF1493;
 }

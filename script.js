@@ -12,8 +12,8 @@ function selectOption(option) {
         // Flash rainbow colors
         flashRainbowColors(function() {
             document.getElementById('question').style.display = 'none'; // Hide the question
-            displayHappyImages(); // Display random happy images across the page
-            showYesMessage(); // Show the custom message
+            showYesMessage(); // Show the custom message first
+            displayHappyImages(); // Display random happy images across the page (around the message)
         });
     } else if (option === 'no') {
         // Display a random image from the noImages array (different from last one)
@@ -115,45 +115,35 @@ function displayHappyImages() {
     happyContainer.id = 'happy-container';
     document.getElementById('container').appendChild(happyContainer);
     
-    // Create an array to track occupied areas to prevent overlap
-    var occupiedAreas = [];
-    
-    // Display each image from the yesImages array at random positions
+    // Display each image from the yesImages array at random positions around the message box
     yesImages.forEach(function(imageSrc, index) {
         var img = new Image();
         img.src = imageSrc;
         img.className = 'happy-image';
         
-        var randomX, randomY, attempts = 0, maxAttempts = 50;
-        var overlap = true;
+        // Divide the screen into zones around the center message box
+        // Left side, right side, top corners, bottom corners
+        var zones = [
+            {x: [5, 25], y: [10, 40]},    // Top left
+            {x: [5, 25], y: [60, 90]},    // Bottom left
+            {x: [75, 90], y: [10, 40]},   // Top right
+            {x: [75, 90], y: [60, 90]},   // Bottom right
+            {x: [10, 30], y: [45, 55]},   // Middle left
+            {x: [70, 85], y: [45, 55]},   // Middle right
+            {x: [35, 45], y: [5, 15]},    // Top center
+            {x: [55, 65], y: [5, 15]}     // Top center right
+        ];
         
-        // Try to find a non-overlapping position
-        while (overlap && attempts < maxAttempts) {
-            // Random position between 5% and 75% to ensure images stay visible
-            randomX = Math.random() * 70 + 5;
-            randomY = Math.random() * 70 + 5;
-            
-            overlap = false;
-            // Check if this position overlaps with any existing images
-            for (var i = 0; i < occupiedAreas.length; i++) {
-                var area = occupiedAreas[i];
-                // Check for overlap (with 15% buffer zone)
-                if (Math.abs(randomX - area.x) < 15 && Math.abs(randomY - area.y) < 15) {
-                    overlap = true;
-                    break;
-                }
-            }
-            attempts++;
-        }
-        
-        // Store this position as occupied
-        occupiedAreas.push({x: randomX, y: randomY});
+        // Assign each image to a zone
+        var zone = zones[index % zones.length];
+        var randomX = Math.random() * (zone.x[1] - zone.x[0]) + zone.x[0];
+        var randomY = Math.random() * (zone.y[1] - zone.y[0]) + zone.y[0];
         
         img.style.position = 'absolute';
         img.style.left = randomX + '%';
         img.style.top = randomY + '%';
-        img.style.maxWidth = '150px'; // Slightly smaller to reduce overlap
-        img.style.maxHeight = '150px';
+        img.style.maxWidth = '120px';
+        img.style.maxHeight = '120px';
         
         // Add a slight delay to each image appearing for a cascading effect
         setTimeout(function() {
@@ -166,7 +156,11 @@ function displayHappyImages() {
 function showYesMessage() {
     var messageBox = document.createElement('div');
     messageBox.id = 'yes-message';
-    messageBox.innerText = yesMessage; // Use the customizable message
+    
+    // Convert newlines to <br> tags for proper display
+    var formattedMessage = yesMessage.replace(/\n/g, '<br>');
+    messageBox.innerHTML = formattedMessage;
+    
     document.body.appendChild(messageBox);
     
     // Add animation class after a short delay
