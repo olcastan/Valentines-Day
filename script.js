@@ -1,7 +1,7 @@
 // script.js
 
-var noImages = ['dez_eyebrows.JPEG', 'dog-crying-meme-doggo-crys.gif', 'dog_seatbelt.JPEG', 'ay cabron.JPEG', 'dog-why-you-lying.gif', 'dez_looking_up_sad.JPEG']; // Add your image filenames here
-var yesImages = ['cat.gif', 'dez_gif.gif', 'dez_smiling_teef.JPEG', 'quiero_perrear.gif', 'shake_you_hips.gif', 'baby-ai.gif', 'cat_kissing_camera.gif', 'traffic-dog-smile.gif']; // Add your happy image filenames here
+var noImages = ['dez_eyebrows.JPEG', 'dog-crying-meme-doggo-crys.gif', 'dog_seatbelt.JPEG', 'ay cabron.JPEG', 'dog-why-you-lying.gif', 'dez_looking_up_sad.JPEG', 'dog_teeth_chattering.gif']; // Add your image filenames here
+var yesImages = ['cat.gif', 'dez_gif.gif', 'dez_smiling_teef.JPEG', 'quiero_perrear.gif', 'shake_you_hips.gif', 'baby-ai.gif', 'cat_kissing_camera.gif']; // Add your happy image filenames here
 var lastNoImage = null; // Track the last "No" image to avoid repeats
 var yesMessage = "It's our first Valentine's being married! Get ready to spend a wonderful day with your husband as we explore our hometown and have fun together!! \n\nWhat you will need: \n- an overnight bag with at least 1 change of clothes \n- a nice outfit to enjoy a romantic dinner (dinner will take place at 9:30pm) \n- ooo pls don't be mad at you husband hehe \n- nothing else! let's have a fun day together, just us💕"; // EDIT THIS TEXT to customize the message
 
