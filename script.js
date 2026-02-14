@@ -1,7 +1,9 @@
 // script.js
 
-var noImages = ['dez_eyebrows.JPEG', 'dog_seatbelt.JPEG', 'ay cabron.JPEG', 'dog-why-you-lying.gif', 'dez_looking_up_sad.JPEG']; // Add your image filenames here
-var yesImages = ['cat.gif', 'dez_gif.gif', '', 'dez_smiling_teef.JPEG', 'quiero_perrear.gif', 'shake_you_hips.gif']; // Add your happy image filenames here
+var noImages = ['dez_eyebrows.JPEG', 'dog-crying-meme-doggo-crys.gif', 'dog_seatbelt.JPEG', 'ay cabron.JPEG', 'dog-why-you-lying.gif', 'dez_looking_up_sad.JPEG']; // Add your image filenames here
+var yesImages = ['cat.gif', 'dez_gif.gif', 'dez_smiling_teef.JPEG', 'quiero_perrear.gif', 'shake_you_hips.gif', 'baby-ai.gif', 'cat_kissing_camera.gif', 'traffic-dog-smile.gif']; // Add your happy image filenames here
+var lastNoImage = null; // Track the last "No" image to avoid repeats
+var yesMessage = "Yay! I knew you'd say yes! 💕"; // EDIT THIS TEXT to customize the message
 
 // Function to handle button click events
 function selectOption(option) {
@@ -11,23 +13,49 @@ function selectOption(option) {
         flashRainbowColors(function() {
             document.getElementById('question').style.display = 'none'; // Hide the question
             displayHappyImages(); // Display random happy images across the page
+            showYesMessage(); // Show the custom message
         });
     } else if (option === 'no') {
-        // Display a random image from the noImages array
-        var randomImage = noImages[Math.floor(Math.random() * noImages.length)];
+        // Display a random image from the noImages array (different from last one)
+        var randomImage;
+        do {
+            randomImage = noImages[Math.floor(Math.random() * noImages.length)];
+        } while (randomImage === lastNoImage && noImages.length > 1);
+        lastNoImage = randomImage;
         displayImage(randomImage);
         
         // Change text on the "No" button to "You sure?"
         document.getElementById('no-button').innerText = 'You sure?'; 
-        // Increase font size of "Yes" button
-        var yesButton = document.getElementById('yes-button');
-        var currentFontSize = window.getComputedStyle(yesButton).getPropertyValue('font-size');
-        var newSize = parseFloat(currentFontSize) * 1.5; // Increase font size by 1.5x
-        yesButton.style.fontSize = newSize + 'px';
+        
+        // Move the "No" button to a random position
+        moveNoButton();
     } else {
         // If neither "Yes" nor "No" was clicked, show an alert message
         alert('Invalid option!');
     }
+}
+
+// Function to move the "No" button to a random position on the page
+function moveNoButton() {
+    var noButton = document.getElementById('no-button');
+    
+    // Get viewport dimensions
+    var viewportWidth = window.innerWidth;
+    var viewportHeight = window.innerHeight;
+    
+    // Get button dimensions
+    var buttonWidth = noButton.offsetWidth;
+    var buttonHeight = noButton.offsetHeight;
+    
+    // Calculate random position (keeping button fully visible)
+    var randomX = Math.random() * (viewportWidth - buttonWidth - 40) + 20; // 20px margin
+    var randomY = Math.random() * (viewportHeight - buttonHeight - 40) + 20; // 20px margin
+    
+    // Apply absolute positioning
+    noButton.style.position = 'fixed';
+    noButton.style.left = randomX + 'px';
+    noButton.style.top = randomY + 'px';
+    noButton.style.margin = '0'; // Remove default margin
 }
 
 // Function to flash rainbow colors and then execute a callback function
@@ -54,7 +82,7 @@ function displayCat() {
     // Create a new Image element for the cat
     var catImage = new Image();
     // Set the source (file path) for the cat image
-    catImage.src = 'cat.gif'; // Assuming the cat image is named "cat.gif"
+    catImage.src = 'monkey.JPEG'; // Assuming the cat image is named "cat.gif"
     // Set alternative text for the image (for accessibility)
     catImage.alt = 'Cat';
     // When the cat image is fully loaded, add it to the image container
@@ -87,28 +115,64 @@ function displayHappyImages() {
     happyContainer.id = 'happy-container';
     document.getElementById('container').appendChild(happyContainer);
     
+    // Create an array to track occupied areas to prevent overlap
+    var occupiedAreas = [];
+    
     // Display each image from the yesImages array at random positions
     yesImages.forEach(function(imageSrc, index) {
         var img = new Image();
         img.src = imageSrc;
         img.className = 'happy-image';
         
-        // Generate random position (keeping images visible)
-        // Random position between 10% and 80% for both x and y to keep images on screen
-        var randomX = Math.random() * 70 + 10; // Between 10% and 80%
-        var randomY = Math.random() * 70 + 10; // Between 10% and 80%
+        var randomX, randomY, attempts = 0, maxAttempts = 50;
+        var overlap = true;
+        
+        // Try to find a non-overlapping position
+        while (overlap && attempts < maxAttempts) {
+            // Random position between 5% and 75% to ensure images stay visible
+            randomX = Math.random() * 70 + 5;
+            randomY = Math.random() * 70 + 5;
+            
+            overlap = false;
+            // Check if this position overlaps with any existing images
+            for (var i = 0; i < occupiedAreas.length; i++) {
+                var area = occupiedAreas[i];
+                // Check for overlap (with 15% buffer zone)
+                if (Math.abs(randomX - area.x) < 15 && Math.abs(randomY - area.y) < 15) {
+                    overlap = true;
+                    break;
+                }
+            }
+            attempts++;
+        }
+        
+        // Store this position as occupied
+        occupiedAreas.push({x: randomX, y: randomY});
         
         img.style.position = 'absolute';
         img.style.left = randomX + '%';
         img.style.top = randomY + '%';
-        img.style.maxWidth = '200px'; // Set max width so images aren't too large
-        img.style.maxHeight = '200px'; // Set max height
+        img.style.maxWidth = '150px'; // Slightly smaller to reduce overlap
+        img.style.maxHeight = '150px';
         
         // Add a slight delay to each image appearing for a cascading effect
         setTimeout(function() {
             happyContainer.appendChild(img);
         }, index * 200); // 200ms delay between each image
     });
+}
+
+// Function to show the "Yes" message in the center
+function showYesMessage() {
+    var messageBox = document.createElement('div');
+    messageBox.id = 'yes-message';
+    messageBox.innerText = yesMessage; // Use the customizable message
+    document.body.appendChild(messageBox);
+    
+    // Add animation class after a short delay
+    setTimeout(function() {
+        messageBox.classList.add('show');
+    }, 100);
 }
 
 // Display the cat.gif initially
